@@ -48,3 +48,31 @@ The application uses a simple data model with meaningful identifiers:
    - Grade level
 
 All data is stored in memory, which means data will be reset when the server restarts.
+
+## Testing
+
+Run these commands from the repository root to install the application and test
+dependencies, then run the backend suite:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest
+```
+
+Backend tests live in [`tests/`](../tests/). Each test uses explicit
+Arrange-Act-Assert (AAA) sections: prepare inputs and expected results, make the
+request, then check the response and state changes. The suite uses FastAPI's
+TestClient without starting a server.
+
+Shared fixtures in [`tests/conftest.py`](../tests/conftest.py) give every test a
+deep copy of the in-memory activity data and restore the original mapping
+afterward, so participant changes cannot leak between tests.
+
+The suite covers activity listing, signup, unregistering, success and error
+responses, required email query parameters, and the root redirect/static HTML
+page. It tests existing backend behavior, not frontend JavaScript or new
+capacity/email-validation rules.
+
+The [backend test workflow](../.github/workflows/backend-tests.yml) runs the same
+installation and test commands on pushes and pull requests using Python 3.13,
+matching the dev container. It is separate from the exercise workflows.
